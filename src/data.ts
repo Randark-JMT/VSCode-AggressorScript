@@ -4,16 +4,20 @@ import {
   MarkupKind,
 } from "vscode-languageserver/node";
 import type { CompletionItem, MarkupContent } from "vscode-languageserver/node";
+import { OFFICIAL_FUNCTIONS } from "./officialData";
 
-export interface FunctionDoc {
-  name: string;
-  kind: CompletionItemKind;
-  detail: string;
-  documentation: string;
-  signature?: string;
-  insertText?: string;
-  insertTextFormat?: InsertTextFormat;
-}
+// ---------------------------------------------------------------------------
+// Predicate helpers  (-is64, -isactive, etc.)
+// ---------------------------------------------------------------------------
+export const PREDICATE_HELPERS: CompletionItem[] = [
+  { label: "-hasbootstraphint", kind: CompletionItemKind.Operator, detail: "-hasbootstraphint($payload) — check for bootstrap hint in payload" },
+  { label: "-is64",             kind: CompletionItemKind.Operator, detail: "-is64($bid) — true if the session is on an x64 system" },
+  { label: "-isactive",         kind: CompletionItemKind.Operator, detail: "-isactive($bid) — true if the session is active (not exited/disconnected)" },
+  { label: "-isadmin",          kind: CompletionItemKind.Operator, detail: "-isadmin($bid) — true if the session has admin rights" },
+  { label: "-isbeacon",         kind: CompletionItemKind.Operator, detail: "-isbeacon($bid) — true if the session is a Beacon (not SSH)" },
+  { label: "-isssh",            kind: CompletionItemKind.Operator, detail: "-isssh($bid) — true if the session is an SSH session" },
+];
+
 
 function makeDoc(description: string): MarkupContent {
   return { kind: MarkupKind.Markdown, value: description };
@@ -515,28 +519,90 @@ export const SLEEP_FUNCTIONS: CompletionItem[] = [
 // ---------------------------------------------------------------------------
 // All completions merged
 // ---------------------------------------------------------------------------
+
+// Build completion items from official data, filling gaps in our hand-written lists
+const OFFICIAL_COMPLETION_ITEMS: CompletionItem[] = [];
+const handWrittenNames = new Set<string>();
+
+// Collect hand-written names first (including predicate helpers)
+for (const item of [
+  ...KEYWORDS, ...HOOKS, ...EVENTS,
+  ...BEACON_COMMANDS, ...BEACON_INFO,
+  ...AGGRESSOR_FUNCTIONS, ...SLEEP_FUNCTIONS,
+  ...PREDICATE_HELPERS,
+]) {
+  if (typeof item.label === "string") handWrittenNames.add(item.label);
+}
+
+// Assign CompletionItemKind based on name pattern
+function guessKind(name: string): CompletionItemKind {
+  if (name.startsWith("-")) return CompletionItemKind.Operator;
+  if (name.startsWith("beacon_") || name === "beacons") return CompletionItemKind.Function;
+  if (name.match(/^b[a-z]/) && !name.startsWith("base64") && !name.startsWith("bof")) {
+    return CompletionItemKind.Function;
+  }
+  if (name.startsWith("open")) return CompletionItemKind.Function;
+  if (name.startsWith("drow_") || name.startsWith("dbutton_")) return CompletionItemKind.Function;
+  if (name.startsWith("pe_") || name.startsWith("bof_")) return CompletionItemKind.Function;
+  if (name.startsWith("pi_")) return CompletionItemKind.Function;
+  if (name.startsWith("ssh_")) return CompletionItemKind.Function;
+  if (name.startsWith("vpn_")) return CompletionItemKind.Function;
+  if (name.startsWith("str_")) return CompletionItemKind.Function;
+  if (name.startsWith("listener_") || name.startsWith("listeners")) return CompletionItemKind.Function;
+  if (name.startsWith("site_") || name.startsWith("sites")) return CompletionItemKind.Function;
+  if (name.match(/^[A-Z_]+$/)) return CompletionItemKind.Constant;
+  return CompletionItemKind.Function;
+}
+
+for (const [name, entry] of Object.entries(OFFICIAL_FUNCTIONS)) {
+  if (handWrittenNames.has(name)) continue; // prefer hand-written entries
+  OFFICIAL_COMPLETION_ITEMS.push({
+    label: name,
+    kind: guessKind(name),
+    detail: entry.detail,
+    documentation: { kind: MarkupKind.Markdown, value: entry.documentation },
+  });
+}
+
 export const ALL_COMPLETIONS: CompletionItem[] = [
   ...KEYWORDS,
   ...HOOKS,
   ...EVENTS,
+  ...PREDICATE_HELPERS,
   ...BEACON_COMMANDS,
   ...BEACON_INFO,
   ...AGGRESSOR_FUNCTIONS,
   ...SLEEP_FUNCTIONS,
+  ...OFFICIAL_COMPLETION_ITEMS,
 ];
 
 // ---------------------------------------------------------------------------
-// Hover lookup map
+// Hover lookup map  (official data wins when hand-written has no hover doc)
 // ---------------------------------------------------------------------------
 export const HOVER_MAP = new Map<string, MarkupContent>();
 
-for (const item of ALL_COMPLETIONS) {
-  if (item.label && (item.documentation || item.detail)) {
-    const content = item.documentation as MarkupContent | undefined;
-    if (content) {
-      HOVER_MAP.set(item.label as string, content);
-    } else if (item.detail) {
-      HOVER_MAP.set(item.label as string, makeDoc(`\`${item.detail}\``));
+// First populate from official data
+for (const [name, entry] of Object.entries(OFFICIAL_FUNCTIONS)) {
+  if (entry.documentation.trim()) {
+    HOVER_MAP.set(name, { kind: MarkupKind.Markdown, value: entry.documentation });
+  }
+  // Also index by alternate anchor names
+  for (const anchor of entry.anchors) {
+    if (!HOVER_MAP.has(anchor) && entry.documentation.trim()) {
+      HOVER_MAP.set(anchor, { kind: MarkupKind.Markdown, value: entry.documentation });
     }
   }
 }
+
+// Then let hand-written entries override (they are more curated)
+for (const item of ALL_COMPLETIONS) {
+  const label = item.label as string;
+  if (!label) continue;
+  const content = item.documentation as MarkupContent | undefined;
+  if (content && content.value) {
+    HOVER_MAP.set(label, content);
+  } else if (item.detail && !HOVER_MAP.has(label)) {
+    HOVER_MAP.set(label, makeDoc(`\`${item.detail}\``));
+  }
+}
+

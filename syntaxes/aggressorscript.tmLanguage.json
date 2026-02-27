@@ -12,10 +12,13 @@
     { "include": "#constants" },
     { "include": "#function-definition" },
     { "include": "#event-handler" },
+    { "include": "#predicate-helpers" },
     { "include": "#builtin-beacon-commands" },
     { "include": "#builtin-beacon-info" },
+    { "include": "#builtin-pe-bof" },
+    { "include": "#builtin-postex-info" },
+    { "include": "#builtin-open-dialogs" },
     { "include": "#builtin-aggressor-functions" },
-    { "include": "#builtin-sleep-functions" },
     { "include": "#builtin-hooks" },
     { "include": "#function-call" },
     { "include": "#variable" },
@@ -116,12 +119,12 @@
           "match": "\\b(\\$null|\\$NIL)\\b"
         },
         {
-          "name": "constant.language.cna",
+          "name": "constant.language.positional.cna",
           "match": "\\$[0-9]\\b"
         },
         {
           "name": "constant.language.args.cna",
-          "match": "\\b(@_)\\b"
+          "match": "@_\\b"
         }
       ]
     },
@@ -165,80 +168,71 @@
         }
       ]
     },
+    "predicate-helpers": {
+      "comment": "Sleep/Aggressor predicate operators: -is64, -isactive, -isadmin, -isbeacon, -isssh, -hasbootstraphint",
+      "patterns": [
+        {
+          "name": "keyword.operator.predicate.cna",
+          "match": "(?<![\\w])(-hasbootstraphint|-is64|-isactive|-isadmin|-isbeacon|-isssh)(?=[\\s(;,)]|$)"
+        }
+      ]
+    },
     "builtin-beacon-commands": {
-      "comment": "b* functions that send tasks to Beacon",
+      "comment": "All b* functions from the official Cobalt Strike documentation",
       "patterns": [
         {
           "name": "support.function.beacon-command.cna",
-          "match": "(?<![\\w&])&?(barch|bargue_add|bargue_list|bargue_remove|bblockdlls|bbrowser|bbrowserpivot|bbrowserpivot_stop|bbypassuac|bcancel|bcd|bcheckin|bclear|bconnect|bcovertvpn|bcp|bdata|bdcsync|bdesktop|bdllinject|bdllload|bdllspawn|bdownload|bdrives|belevate|belevate_command|berror|bexecute|bexecute_assembly|bexit|bgetprivs|bgetsystem|bgetuid|bhashdump|binfo|binject|binjectsh|binput|bipconfig|bjobkill|bjobs|bjump|bkerberos_ccache_use|bkerberos_ticket_purge|bkerberos_ticket_use|bkeylogger|bkill|blink|blog|blog2|bloginuser|blogonpasswords|bls|bmimikatz|bmkdir|bmode|bmv|bnet|bnote|bpassthehash|bpause|bportscan|bpowerpick|bpowershell|bpowershell_import|bpowershell_import_clear|bppid|bps|bpsexec|bpsexec_command|bpsexec_psh|bpsinject|bpwd|breg_query|breg_queryv|bremote_exec|brev2self|brm|brportfwd|brportfwd_stop|brun|brunas|brunasadmin|brunu|bscreenshot|bsetenv|bshell|bshinject|bshspawn|bsleep|bsocks|bsocks_stop|bspawn|bspawnas|bspawnto|bspawnu|bssh|bssh_key|bstage|bsteal_token|bsudo|btask|btimestomp|bunlink|bupload|bupload_raw|bwdigest|bwinrm|bwmi)(?=[\\s(;,)]|$)"
+          "match": "(?<![\\w&])&?(barch|bargue_add|bargue_list|bargue_remove|bbeacon_config|bbeacon_gate|bblockdlls|bbrowser|bbrowserpivot|bbrowserpivot_stop|bbypassuac|bcancel|bcd|bcheckin|bclear|bclipboard|bconnect|bcovertvpn|bcp|bdata|bdata_data_store_load|bdata_data_store_unload|bdata_store_list|bdcsync|bdesktop|bdllinject|bdllload|bdllspawn|bdownload|bdrives|belevate|belevate_command|berror|beshell|bexecute|bexecute_assembly|bexit|bgetprivs|bgetsystem|bgetuid|bhashdump|binfo|binject|binline_execute|binput|bipconfig|bjob_send_data|bjoberror|bjobkill|bjoblog|bjobs|bjump|bkerberos_ccache_use|bkerberos_ticket_purge|bkerberos_ticket_use|bkeylogger|bkill|blink|blog|blog2|bloginuser|blogonpasswords|bls|bmimikatz|bmimikatz_small|bmkdir|bmode|bmv|bnet|bnote|bpassthehash|bpause|bportscan|bpowerpick|bpowershell|bpowershell_import|bpowershell_import_clear|bppid|bprintscreen|bps|bpsexec|bpsexec_command|bpsexec_psh|bpsinject|bpwd|breg_queryv|bremote_exec|brev2self|brm|brportfwd|brportfwd_local|brportfwd_stop|brun|brunas|brunasadmin|brunu|bscreenshot|bscreenwatch|bsetenv|bshell|bshinject|bshspawn|bsleep|bsleepu|bsocks|bsocks_stop|bspawn|bspawnas|bspawnto|bspawnu|bspunnel|bspunnel_local|bssh|bssh_key|bstage|bsteal_token|bsudo|bsyscall_method|btask|btimestomp|btoken_store_remove|btoken_store_remove_all|btoken_store_show|btoken_store_steal|btoken_store_use|bunlink|bupload|bupload_raw|bwdigest|bwinrm|bwmi)(?=[\\s(;,)]|$)"
         }
       ]
     },
     "builtin-beacon-info": {
-      "comment": "beacon_* functions for querying beacon state",
+      "comment": "beacon_* and beacons functions",
       "patterns": [
         {
           "name": "support.function.beacon-info.cna",
-          "match": "(?<![\\w&])&?(beacon_command_describe|beacon_command_detail|beacon_command_register|beacon_commands|beacon_data|beacon_elevator_describe|beacon_elevator_register|beacon_elevators|beacon_execute_job|beacon_exploit_describe|beacon_exploit_register|beacon_exploits|beacon_host_imported_script|beacon_host_script|beacon_ids|beacon_info|beacon_link|beacon_remote_exec_method_describe|beacon_remote_exec_method_register|beacon_remote_exec_methods|beacon_remote_exploit_arch|beacon_remote_exploit_describe|beacon_remote_exploit_register|beacon_remote_exploits|beacon_remove|beacon_stage_pipe|beacon_stage_tcp|beacons|ssh_command_describe|ssh_command_detail|ssh_command_register|ssh_commands)(?=[\\s(;,)]|$)"
+          "match": "(?<![\\w&])&?(beacon_command_describe|beacon_command_detail|beacon_command_group|beacon_command_register|beacon_commands|beacon_data|beacon_elevator_describe|beacon_elevator_register|beacon_elevators|beacon_execute_job|beacon_execute_postex_job|beacon_exploit_describe|beacon_exploit_register|beacon_exploits|beacon_host_imported_script|beacon_host_script|beacon_ids|beacon_info|beacon_inline_execute|beacon_job_hide_output|beacon_job_name|beacon_link|beacon_remote_exec_method_describe|beacon_remote_exec_method_register|beacon_remote_exec_methods|beacon_remote_exploit_arch|beacon_remote_exploit_describe|beacon_remote_exploit_register|beacon_remote_exploits|beacon_remove|beacon_stage_pipe|beacon_stage_tcp|beacons|ssh_command_describe|ssh_command_detail|ssh_command_group|ssh_command_register|ssh_commands)(?=[\\s(;,)]|$)"
+        }
+      ]
+    },
+    "builtin-pe-bof": {
+      "comment": "PE manipulation and BOF functions",
+      "patterns": [
+        {
+          "name": "support.function.pe-bof.cna",
+          "match": "(?<![\\w&])&?(bof_extract|bof_pack|extract_reflective_loader|pe_insert_rich_header|pe_mask|pe_mask_section|pe_mask_string|pe_patch_code|pe_remove_rich_header|pe_set_compile_time_with_long|pe_set_compile_time_with_string|pe_set_export_name|pe_set_long|pe_set_short|pe_set_string|pe_set_stringz|pe_set_value_at|pe_stomp|pe_update_checksum|pedump|setup_reflective_loader|setup_strings|setup_transformations)(?=[\\s(;,)]|$)"
+        }
+      ]
+    },
+    "builtin-postex-info": {
+      "comment": "pi_* post-ex spawn/explicit info functions",
+      "patterns": [
+        {
+          "name": "support.function.postex-info.cna",
+          "match": "(?<![\\w&])&?(pi_explicit_get|pi_explicit_info|pi_explicit_set|pi_spawn_get|pi_spawn_info|pi_spawn_set|pi_user_explicit_clear|pi_user_explicit_get|pi_user_explicit_get_map|pi_user_explicit_get_names|pi_user_explicit_set|pi_user_spawn_clear|pi_user_spawn_get|pi_user_spawn_get_map|pi_user_spawn_get_names|pi_user_spawn_set)(?=[\\s(;,)]|$)"
+        }
+      ]
+    },
+    "builtin-open-dialogs": {
+      "comment": "openXxx UI dialog functions",
+      "patterns": [
+        {
+          "name": "support.function.ui-open.cna",
+          "match": "(?<![\\w&])&?(openAboutDialog|openApplicationManager|openAutoRunDialog|openBeaconBrowser|openBeaconConsole|openBrowserPivotSetup|openBypassUACDialog|openCloneSiteDialog|openConnectDialog|openCovertVPNSetup|openCredentialManager|openDefaultShortcutsDialog|openDownloadBrowser|openElevateDialog|openEventLog|openFileBrowser|openGoldenTicketDialog|openHTMLApplicationDialog|openHostFileDialog|openInterfaceManager|openJavaSignedAppletDialog|openJavaSmartAppletDialog|openJobBrowser|openJobConsole|openJumpDialog|openKeystrokeBrowser|openListenerManager|openMakeTokenDialog|openMalleableProfileDialog|openOfficeMacroDialog|openOneLinerDialog|openOrActivate|openPayloadGeneratorDialog|openPayloadGeneratorStageDialog|openPayloadHelper|openPivotListenerSetup|openPortScanner|openPortScannerLocal|openPowerShellWebDialog|openPreferencesDialog|openProcessBrowser|openSOCKSBrowser|openSOCKSSetup|openScreenshotBrowser|openScriptConsole|openScriptManager|openScriptedWebDialog|openServiceBrowser|openSiteManager|openSpawnAsDialog|openSpawnDialog|openSpearPhishDialog|openSystemInformationDialog|openSystemProfilerDialog|openTargetBrowser|openWebLog|openWindowsDropperDialog|openWindowsExecutableDialog|openWindowsExecutableStageAllDialog|openWindowsExecutableStageDialog)(?=[\\s(;,)]|$)"
         }
       ]
     },
     "builtin-aggressor-functions": {
-      "comment": "Aggressor Script UI and management functions",
+      "comment": "All other Aggressor Script built-in functions from official documentation",
       "patterns": [
         {
           "name": "support.function.aggressor.cna",
-          "match": "(?<![\\w&])&?(action|addTab|addVisualization|add_to_clipboard|alias_clear|applications|archives|artifact_general|artifact_payload|artifact_sign|artifact_stager|base64_decode|base64_encode|call|closeClient|colorPanel|credential_add|credentials|data_keys|data_query|dbutton_action|dbutton_help|dialog|dialog_description|dialog_show|dispatch_event|downloads|drow_beacon|drow_checkbox|drow_combobox|drow_exploits|drow_file|drow_interface|drow_krbtgt|drow_listener|drow_listener_stage|drow_mailserver|drow_site|drow_text|drow_text_big|dstamp|elog|encode|fireAlias|fireEvent|format_size|getAggressorClient|gunzip|gzip|highlight|host_delete|host_info|host_update|hosts|insert_component|insert_menu|iprange|keystrokes|licenseKey|listener_create_ext|listener_delete|listener_describe|listener_info|listener_pivot_create|listener_restart|listeners|listeners_local|listeners_stageless|localip|menubar|mynick|nextTab|openAboutDialog|openApplicationManager|openAutoRunDialog|openBeaconBrowser|openBeaconConsole|openBrowserPivotSetup|openBypassUACDialog|openCloneSiteDialog|openConnectDialog|openCovertVPNSetup|openCredentialManager|openDownloadBrowser|openElevateDialog|openEventLog|openFileBrowser|openGoldenTicketDialog|openHTMLApplicationDialog|openHostFileDialog|openInterfaceManager|openJavaSignedAppletDialog|openJavaSmartAppletDialog|openJumpDialog|openKeystrokeBrowser|openListenerManager|openMakeTokenDialog|openOfficeMacro|openOneLinerDialog|openOrActivate|openPayloadGeneratorDialog|openPayloadHelper|openPivotListenerSetup|openPortScanner|openPortScannerLocal|openPowerShellWebDialog|openPreferencesDialog|openProcessBrowser|openSOCKSBrowser|openSOCKSSetup|openScreenshotBrowser|openScriptConsole|openScriptManager|openScriptedWebDialog|openServiceBrowser|openSiteManager|openSpawnAsDialog|openSpearPhishDialog|openSystemInformationDialog|openSystemProfilerDialog|openTargetBrowser|openWebLog|openWindowsDropperDialog|openWindowsExecutableDialog|openWindowsExecutableStage|payload|pgraph|pivots|popup_clear|powershell_command|powershell_compress|pref_get|pref_get_list|pref_set|pref_set_list|previousTab|privmsg|prompt_confirm|prompt_directory_open|prompt_file_open|prompt_file_save|prompt_text|range|removeTab|resetData|say|sbrowser|screenshots|script_resource|separator|services|showVisualization|show_error|show_message|site_host|site_kill|sites|stager|stager_bind_pipe|stager_bind_tcp|str_chunk|str_decode|str_encode|str_xor|sync_download|targets|tbrowser|tokenToEmail|transform|transform_vbs|tstamp|url_open|users|vpn_interface_info|vpn_interfaces|vpn_tap_create|vpn_tap_delete)(?=[\\s(;,)]|$)"
-        },
-        {
-          "name": "support.function.report.cna",
-          "match": "(?<![\\w&])&?(agApplications|agC2info|agCredentials|agServices|agSessions|agTargets|agTokens|attack_describe|attack_detect|attack_mitigate|attack_name|attack_tactics|attack_url|bookmark|br|describe|h1|h2|h3|h4|kvtable|landscape|layout|list_unordered|nobreak|output|p|p_formatted|table|ts)(?=[\\s(;,)]|$)"
-        },
-        {
-          "name": "support.function.pe-manipulation.cna",
-          "match": "(?<![\\w&])&?(pe_insert_rich_header|pe_mask|pe_mask_section|pe_mask_string|pe_patch_code|pe_remove_rich_header|pe_set_compile_time_with_long|pe_set_compile_time_with_string|pe_set_export_name|pe_set_long|pe_set_short|pe_set_string|pe_set_stringz|pe_set_value_at|pe_stomp|pe_update_checksum|pedumo|setup_reflective_loader|extract_reflective_loader|bof_extract|bof_pack)(?=[\\s(;,)]|$)"
-        }
-      ]
-    },
-    "builtin-sleep-functions": {
-      "comment": "Sleep language built-in functions",
-      "patterns": [
-        {
-          "name": "support.function.sleep.array.cna",
-          "match": "(?<![\\w&])&?(add|addAll|cast|clear|concat|copy|filter|flatten|map|pop|push|putAll|reduce|remove|removeAll|removeAt|retainAll|reverse|search|shift|size|sort|sorta|sortd|sortn|splice|sublist|sum)(?=[\\s(;,)]|$)"
-        },
-        {
-          "name": "support.function.sleep.date.cna",
-          "match": "(?<![\\w&])&?(formatDate|parseDate|ticks)(?=[\\s(;,)]|$)"
-        },
-        {
-          "name": "support.function.sleep.file.cna",
-          "match": "(?<![\\w&])&?(chdir|createNewFile|cwd|deleteFile|getFileName|getFileParent|getFileProper|lastModified|listRoots|lof|ls|mkdir|rename|setLastModified|setReadOnly)(?=[\\s(;,)]|$)"
-        },
-        {
-          "name": "support.function.sleep.hash.cna",
-          "match": "(?<![\\w&])&?(keys|ohash|ohasha|setMissPolicy|setRemovalPolicy|values)(?=[\\s(;,)]|$)"
-        },
-        {
-          "name": "support.function.sleep.io.cna",
-          "match": "(?<![\\w&])&?(allocate|available|bread|bwrite|closef|connect|exec|fork|getConsole|listen|mark|openf|print|printAll|printEOF|println|readAll|readAsObject|readb|readc|readln|readObject|reset|setEncoding|sizeof|skip|wait|writeAsObject|writeb|writeObject)(?=[\\s(;,)]|$)"
-        },
-        {
-          "name": "support.function.sleep.math.cna",
-          "match": "(?<![\\w&])&?(abs|acos|asin|atan|atan2|ceil|checksum|cos|degrees|digest|double|exp|floor|formatNumber|int|log|long|not|parseNumber|radians|rand|round|sin|sqrt|srand|tan|uint)(?=[\\s(;,)]|$)"
-        },
-        {
-          "name": "support.function.sleep.string.cna",
-          "match": "(?<![\\w&])&?(asc|byteAt|chr|charAt|find|indexOf|join|lc|left|lindexOf|matched|matches|mid|pack|replace|replaceAt|right|split|strlen|strrep|substr|tr|uc|unpack)(?=[\\s(;,)]|$)"
-        },
-        {
-          "name": "support.function.sleep.core.cna",
-          "match": "(?<![\\w&])&?(acquire|casti|checkError|compile_closure|debug|eval|exit|expr|function|getStackTrace|global|iff|include|inline|invoke|lambda|let|local|newInstance|popl|profile|pushl|release|scalar|semaphore|setf|setField|sleep|systemProperties|taint|typeOf|untaint|use|warn|watch)(?=[\\s(;,)]|$)"
+          "match": "(?<![\\w&])&?(action|addTab|addVisualization|add_to_clipboard|alias_clear|all_payloads|applications|archives|artifact|artifact_general|artifact_payload|artifact_sign|artifact_stageless|artifact_stager|base64_decode|base64_encode|bind|bread_pipe|call|closeClient|colorMenu|credential_add|credentials|custom_event|custom_event_private|data_keys|data_query|dbutton_action|dbutton_help|dialog|dialog_description|dialog_show|dispatch_event|downloads|drow_beacon|drow_checkbox|drow_combobox|drow_exploits|drow_file|drow_interface|drow_krbtgt|drow_listener|drow_listener_smb|drow_listener_stage|drow_mailserver|drow_proxyserver|drow_site|drow_text|drow_text_big|dstamp|elog|encode|file_browser|fireAlias|fireEvent|format_size|getAggressorClient|getAggressorClientType|get_postex_kit_callback_id|gunzip|gzip|highlight|host_delete|host_info|host_update|hosts|insert_color_menu|insert_component|insert_menu|iprange|keystrokes|killdate|listener_create|listener_create_ext|listener_delete|listener_describe|listener_info|listener_pivot_create|listener_restart|listeners|listeners_local|listeners_stageless|localip|menubar|mynick|nextTab|on|payload|payload_bootstrap_hint|payload_local|pgraph|pivots|popup_clear|powershell|powershell_command|powershell_compress|pref_get|pref_get_list|pref_set|pref_set_list|previousTab|privmsg|process_browser|prompt_confirm|prompt_directory_open|prompt_file_open|prompt_file_save|prompt_text|range|redactobject|removeTab|resetData|say|sbrowser|screenshots|script_resource|separator|services|shellcode|showVisualization|show_error|show_message|site_host|site_kill|sites|stager|stager_bind_pipe|stager_bind_tcp|str_chunk|str_decode|str_encode|str_xor|sync_download|targets|tbrowser|tokenToEmail|transform|transform_vbs|tstamp|unbind|url_open|users|vpn_interface_info|vpn_interfaces|vpn_tap_create|vpn_tap_delete)(?=[\\s(;,)]|$)"
         }
       ]
     },
     "builtin-hooks": {
-      "comment": "Aggressor Script hook names (used with set)",
+      "comment": "Aggressor Script SET hook names",
       "patterns": [
         {
           "name": "support.constant.hook.cna",
@@ -249,7 +243,7 @@
     "function-call": {
       "patterns": [
         {
-          "name": "entity.name.function.call.cna",
+          "name": "entity.name.function.call.ampersand.cna",
           "match": "&[a-zA-Z_][a-zA-Z0-9_]*"
         },
         {
@@ -261,9 +255,11 @@
     "variable": {
       "patterns": [
         {
-          "name": "variable.other.special.cna",
-          "match": "\\$[0-9]\\b",
-          "comment": "Positional parameters $1, $2, etc."
+          "name": "variable.other.positional.cna",
+          "match": "(\\$)[0-9]\\b",
+          "captures": {
+            "1": { "name": "punctuation.definition.variable.cna" }
+          }
         },
         {
           "name": "variable.other.scalar.cna",
@@ -291,36 +287,36 @@
     "operators": {
       "patterns": [
         {
-          "name": "keyword.operator.comparison.cna",
-          "match": "\\s(eq|ne|lt|gt|le|ge|isin|iswm|hasmatch)\\s"
+          "name": "keyword.operator.comparison.string.cna",
+          "match": "(?<=\\s)(eq|ne|lt|gt|le|ge|isin|iswm|hasmatch)(?=\\s)"
         },
         {
           "name": "keyword.operator.type.cna",
-          "match": "\\s(-isarray|-ishash|-isfunction|-isletter|-isnumber|-isupper|-islower|-istrue)\\s"
+          "match": "(?<=\\s)(-isarray|-ishash|-isfunction|-isletter|-isnumber|-isupper|-islower|-istrue)(?=\\s)"
         },
         {
           "name": "keyword.operator.logical.cna",
-          "match": "(&&|\\|\\||!)"
+          "match": "(&&|\\|\\||!(?!=))"
         },
         {
           "name": "keyword.operator.arithmetic.cna",
-          "match": "(\\+=|-=|\\*=|/=|%=|\\+|-|\\*|/|%)"
-        },
-        {
-          "name": "keyword.operator.assignment.cna",
-          "match": "(?<![=!<>])=(?![=>])"
+          "match": "(\\+=|-=|\\*=|/=|%=)"
         },
         {
           "name": "keyword.operator.range.cna",
           "match": "\\.\\."
         },
         {
+          "name": "keyword.operator.string-concat.cna",
+          "match": "\\$\\+"
+        },
+        {
           "name": "keyword.operator.hash.cna",
           "match": "=>"
         },
         {
-          "name": "keyword.operator.string-repeat.cna",
-          "match": "\\bx\\b"
+          "name": "keyword.operator.assignment.cna",
+          "match": "(?<![=!<>])=(?![=>])"
         }
       ]
     }

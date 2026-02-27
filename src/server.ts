@@ -15,10 +15,9 @@ import {
   SymbolKind,
   Range,
   Position,
-  InsertTextFormat,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
-import { ALL_COMPLETIONS, HOVER_MAP } from "./data";
+import { ALL_COMPLETIONS, HOVER_MAP, PREDICATE_HELPERS } from "./data";
 
 // Create a connection for the server using Node's IPC
 const connection = createConnection(ProposedFeatures.all);
@@ -32,7 +31,7 @@ connection.onInitialize((_params: InitializeParams): InitializeResult => {
       textDocumentSync: TextDocumentSyncKind.Incremental,
       completionProvider: {
         resolveProvider: false,
-        triggerCharacters: ["$", "@", "%", "&", " "],
+        triggerCharacters: ["$", "@", "%", "&", " ", "-"],
       },
       hoverProvider: true,
       documentSymbolProvider: true,
@@ -62,31 +61,37 @@ connection.onCompletion(
     const isVariable = /[\$@%]$/.test(lineText);
     const isAfterOn = /\bon\s+\w*$/.test(lineText);
     const isAfterSet = /\bset\s+\w*$/.test(lineText);
+    const isPredicateContext = /(?:^|\s)-\w*$/.test(lineText);
 
     if (isAfterAmpersand) {
-      // Only functions
+      // Only function-type completions
       return ALL_COMPLETIONS.filter(
-        (c) => c.kind === CompletionItemKind.Function
+        (c) => c.kind === CompletionItemKind.Function || c.kind === CompletionItemKind.Operator
       );
     }
 
     if (isVariable) {
-      // No completions for variable sigils (let the user type the name)
+      // No completions for bare variable sigils
       return [];
     }
 
     if (isAfterOn) {
-      // Only events
+      // Only event name completions
       return ALL_COMPLETIONS.filter(
         (c) => c.kind === CompletionItemKind.Event
       );
     }
 
     if (isAfterSet) {
-      // Only hooks
+      // Only hook name completions
       return ALL_COMPLETIONS.filter(
         (c) => c.kind === CompletionItemKind.Constant
       );
+    }
+
+    if (isPredicateContext) {
+      // Predicate helpers (-is64, -isactive, etc.)
+      return PREDICATE_HELPERS;
     }
 
     return ALL_COMPLETIONS;
@@ -128,13 +133,13 @@ function getWordAtPosition(doc: TextDocument, position: Position): string | null
   const text = doc.getText();
   const offset = doc.offsetAt(position);
 
-  // Walk backward to find start of word
+  // Walk backward to find start of word (word chars only)
   let start = offset;
   while (start > 0 && isWordChar(text[start - 1])) {
     start--;
   }
-  // Strip leading & sigil if present
-  if (start > 0 && text[start - 1] === "&") {
+  // Include leading & (function call sigil) or - (predicate helper prefix)
+  if (start > 0 && (text[start - 1] === "&" || text[start - 1] === "-")) {
     start--;
   }
 
@@ -147,7 +152,7 @@ function getWordAtPosition(doc: TextDocument, position: Position): string | null
   if (start === end) return null;
 
   const raw = text.slice(start, end);
-  // Remove leading & if present
+  // Strip leading & sigil (keep - for predicate helpers like -is64)
   return raw.startsWith("&") ? raw.slice(1) : raw;
 }
 
