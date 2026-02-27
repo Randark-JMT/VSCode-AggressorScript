@@ -3,7 +3,7 @@
   "type": "commonjs",
   "displayName": "AggressorScript Language Support for VSCode",
   "description": "Language support for Cobalt Strike Aggressor Script (.cna) with syntax highlighting, code completion, and hover documentation.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "icon": "images/icon.png",
   "engines": {
     "vscode": "^1.75.0"
