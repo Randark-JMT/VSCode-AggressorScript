@@ -29,7 +29,7 @@ export function activate(context: ExtensionContext): void {
   };
 
   client = new LanguageClient(
-    "aggressorscript-lsp",
+    "VSCode-AggressorScript",
     "AggressorScript Language Server",
     serverOptions,
     clientOptions

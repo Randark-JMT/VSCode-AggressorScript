@@ -37,7 +37,7 @@ connection.onInitialize((_params: InitializeParams): InitializeResult => {
       documentSymbolProvider: true,
     },
     serverInfo: {
-      name: "aggressorscript-lsp",
+      name: "VSCode-AggressorScript",
       version: "0.1.0",
     },
   };
