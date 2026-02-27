@@ -1,0 +1,498 @@
+{
+  "Sub / Function": {
+    "prefix": "sub",
+    "body": [
+      "sub ${1:function_name} {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Define a subroutine/function"
+  },
+  "If": {
+    "prefix": "if",
+    "body": [
+      "if (${1:condition}) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "If statement"
+  },
+  "If Else": {
+    "prefix": "ifelse",
+    "body": [
+      "if (${1:condition}) {",
+      "\t$0",
+      "} else {",
+      "\t",
+      "}"
+    ],
+    "description": "If-else statement"
+  },
+  "If Else If": {
+    "prefix": "ifelseif",
+    "body": [
+      "if (${1:condition}) {",
+      "\t$0",
+      "} else if (${2:condition}) {",
+      "\t",
+      "} else {",
+      "\t",
+      "}"
+    ],
+    "description": "If-else if-else statement"
+  },
+  "While": {
+    "prefix": "while",
+    "body": [
+      "while (${1:condition}) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "While loop"
+  },
+  "Foreach": {
+    "prefix": "foreach",
+    "body": [
+      "foreach \\$${1:item} (${2:@collection}) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Foreach loop"
+  },
+  "For": {
+    "prefix": "for",
+    "body": [
+      "for (\\$${1:i} = 0; \\$${1:i} < ${2:count}; \\$${1:i}++) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "For loop"
+  },
+  "Try Catch": {
+    "prefix": "try",
+    "body": [
+      "try {",
+      "\t$0",
+      "} catch \\$${1:error} {",
+      "\t",
+      "}"
+    ],
+    "description": "Try-catch block"
+  },
+  "On Event Handler": {
+    "prefix": "on",
+    "body": [
+      "on ${1:event_name} {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Register an event handler"
+  },
+  "Alias (Beacon Command)": {
+    "prefix": "alias",
+    "body": [
+      "alias ${1:command_name} {",
+      "\tlocal('\\$${2:bid}');",
+      "\t\\$${2:bid} = \\$1;",
+      "\t$0",
+      "}"
+    ],
+    "description": "Define a custom Beacon alias command"
+  },
+  "Popup Menu": {
+    "prefix": "popup",
+    "body": [
+      "popup ${1:menu_name} {",
+      "\titem \"${2:Menu Item}\" {",
+      "\t\t$0",
+      "\t}",
+      "}"
+    ],
+    "description": "Define a popup menu"
+  },
+  "Dialog": {
+    "prefix": "dialog",
+    "body": [
+      "\\$${1:dialog} = dialog(\"${2:Title}\", %(${3:key} => \"${4:value}\"), {",
+      "\t\\$${5:bid} = \\$1;",
+      "\t\\$${6:button} = \\$2;",
+      "\t\\$${7:values} = \\$3;",
+      "\t$0",
+      "});",
+      "drow_text(\\$${1:dialog}, \"${8:field}\", \"${9:Label}:\");",
+      "dbutton_action(\\$${1:dialog}, \"${10:OK}\");",
+      "dbutton_help(\\$${1:dialog}, \"${11:Help URL}\");",
+      "dialog_show(\\$${1:dialog});"
+    ],
+    "description": "Create and show a dialog"
+  },
+  "Beacon Initial": {
+    "prefix": "beacon_initial",
+    "body": [
+      "on beacon_initial {",
+      "\tlocal('\\$${1:bid}');",
+      "\t\\$${1:bid} = \\$1;",
+      "\t$0",
+      "}"
+    ],
+    "description": "Event handler for new beacon check-in"
+  },
+  "Heartbeat": {
+    "prefix": "heartbeat",
+    "body": [
+      "on heartbeat_${1|1s,5s,10s,15s,30s,1m,5m,10m,15m,20m,30m,60m|} {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Periodic heartbeat event handler"
+  },
+  "Set Hook": {
+    "prefix": "set",
+    "body": [
+      "set ${1|BEACON_SLEEP_MASK,EXECUTABLE_ARTIFACT_GENERATOR,POWERSHELL_COMMAND,POWERSHELL_COMPRESS,RESOURCE_GENERATOR,PSEXEC_SERVICE|} {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Override a Cobalt Strike hook"
+  },
+  "BEACON_SLEEP_MASK": {
+    "prefix": "BEACON_SLEEP_MASK",
+    "body": [
+      "set BEACON_SLEEP_MASK {",
+      "\t# \\$1 = mask/unmask flag (1=mask, 0=unmask)",
+      "\t# \\$2 = beacon ID",
+      "\t# \\$3 = sleep time",
+      "\t$0",
+      "}"
+    ],
+    "description": "Override the Beacon sleep mask hook"
+  },
+  "EXECUTABLE_ARTIFACT_GENERATOR": {
+    "prefix": "EXECUTABLE_ARTIFACT_GENERATOR",
+    "body": [
+      "set EXECUTABLE_ARTIFACT_GENERATOR {",
+      "\t# \\$1 = artifact name",
+      "\t# \\$2 = shellcode bytes",
+      "\t$0",
+      "}"
+    ],
+    "description": "Override executable artifact generation"
+  },
+  "POWERSHELL_COMMAND": {
+    "prefix": "POWERSHELL_COMMAND",
+    "body": [
+      "set POWERSHELL_COMMAND {",
+      "\t# \\$1 = PowerShell command",
+      "\treturn \\$1;",
+      "}"
+    ],
+    "description": "Override the PowerShell command format"
+  },
+  "Prompt Text": {
+    "prefix": "prompt_text",
+    "body": [
+      "prompt_text(\"${1:Enter value:}\", \"${2:default}\", {",
+      "\t\\$${3:value} = \\$1;",
+      "\t$0",
+      "});"
+    ],
+    "description": "Show a text prompt dialog"
+  },
+  "Prompt Confirm": {
+    "prefix": "prompt_confirm",
+    "body": [
+      "prompt_confirm(\"${1:Are you sure?}\", \"${2:Confirm}\", {",
+      "\t$0",
+      "});"
+    ],
+    "description": "Show a confirmation dialog"
+  },
+  "Shell Command": {
+    "prefix": "bshell",
+    "body": [
+      "bshell(\\$${1:bid}, \"${2:command}\");"
+    ],
+    "description": "Execute a shell command via Beacon"
+  },
+  "PowerShell Command": {
+    "prefix": "bpowershell",
+    "body": [
+      "bpowershell(\\$${1:bid}, '${2:Get-Process}');"
+    ],
+    "description": "Execute a PowerShell command via Beacon"
+  },
+  "Upload File": {
+    "prefix": "bupload",
+    "body": [
+      "bupload(\\$${1:bid}, \"${2:/local/path/to/file}\");"
+    ],
+    "description": "Upload a file to Beacon"
+  },
+  "Download File": {
+    "prefix": "bdownload",
+    "body": [
+      "bdownload(\\$${1:bid}, \"${2:C:\\\\path\\\\to\\\\file}\");"
+    ],
+    "description": "Download a file from Beacon"
+  },
+  "Execute Assembly": {
+    "prefix": "bexecute_assembly",
+    "body": [
+      "bexecute_assembly(\\$${1:bid}, \"${2:/path/to/assembly.exe}\", \"${3:args}\");"
+    ],
+    "description": "Execute a .NET assembly in memory via Beacon"
+  },
+  "Inject Shellcode": {
+    "prefix": "binject",
+    "body": [
+      "binject(\\$${1:bid}, ${2:\\$shellcode}, \"${3:x64}\");"
+    ],
+    "description": "Inject shellcode into a process via Beacon"
+  },
+  "DLL Inject": {
+    "prefix": "bdllinject",
+    "body": [
+      "bdllinject(\\$${1:bid}, ${2:\\$pid}, \"${3:/path/to/dll.dll}\");"
+    ],
+    "description": "Inject a DLL into a process via Beacon"
+  },
+  "Spawn and Inject": {
+    "prefix": "bspawn",
+    "body": [
+      "bspawn(\\$${1:bid}, \"${2:x64}\");"
+    ],
+    "description": "Spawn a new Beacon process"
+  },
+  "Mimikatz": {
+    "prefix": "bmimikatz",
+    "body": [
+      "bmimikatz(\\$${1:bid}, \"${2:sekurlsa::logonpasswords}\");"
+    ],
+    "description": "Run Mimikatz command via Beacon"
+  },
+  "Get System": {
+    "prefix": "bgetsystem",
+    "body": [
+      "bgetsystem(\\$${1:bid});"
+    ],
+    "description": "Attempt to get SYSTEM privileges via Beacon"
+  },
+  "Hashdump": {
+    "prefix": "bhashdump",
+    "body": [
+      "bhashdump(\\$${1:bid});"
+    ],
+    "description": "Dump password hashes via Beacon"
+  },
+  "Screenshot": {
+    "prefix": "bscreenshot",
+    "body": [
+      "bscreenshot(\\$${1:bid});"
+    ],
+    "description": "Take a screenshot via Beacon"
+  },
+  "Keylogger": {
+    "prefix": "bkeylogger",
+    "body": [
+      "bkeylogger(\\$${1:bid});"
+    ],
+    "description": "Start keylogger via Beacon"
+  },
+  "Port Scan": {
+    "prefix": "bportscan",
+    "body": [
+      "bportscan(\\$${1:bid}, \"${2:192.168.1.0/24}\", \"${3:1-1024,3389,8080}\", \"${4:arp}\", ${5:1024});"
+    ],
+    "description": "Run port scan via Beacon"
+  },
+  "Sleep": {
+    "prefix": "bsleep",
+    "body": [
+      "bsleep(\\$${1:bid}, ${2:60}, ${3:0});"
+    ],
+    "description": "Set Beacon sleep time (seconds, jitter%)"
+  },
+  "SOCKS Proxy": {
+    "prefix": "bsocks",
+    "body": [
+      "bsocks(\\$${1:bid}, ${2:1080});"
+    ],
+    "description": "Start SOCKS proxy via Beacon"
+  },
+  "PSExec": {
+    "prefix": "bpsexec",
+    "body": [
+      "bpsexec(\\$${1:bid}, \"${2:target_host}\", \"${3:SHARE}\", \"${4:listener_name}\");"
+    ],
+    "description": "Lateral movement via PsExec"
+  },
+  "Jump": {
+    "prefix": "bjump",
+    "body": [
+      "bjump(\\$${1:bid}, \"${2|psexec,psexec64,psexec_psh,winrm,winrm64|}\", \"${3:target}\", \"${4:listener}\");"
+    ],
+    "description": "Lateral movement via jump command"
+  },
+  "Remote Exec": {
+    "prefix": "bremote_exec",
+    "body": [
+      "bremote_exec(\\$${1:bid}, \"${2|wmi,winrm,psexec|}\", \"${3:target}\", \"${4:command}\");"
+    ],
+    "description": "Remote execution via Beacon"
+  },
+  "Steal Token": {
+    "prefix": "bsteal_token",
+    "body": [
+      "bsteal_token(\\$${1:bid}, ${2:\\$pid});"
+    ],
+    "description": "Steal token from a process via Beacon"
+  },
+  "Rev2Self": {
+    "prefix": "brev2self",
+    "body": [
+      "brev2self(\\$${1:bid});"
+    ],
+    "description": "Revert to original token via Beacon"
+  },
+  "Get Beacons": {
+    "prefix": "beacons",
+    "body": [
+      "foreach \\$${1:beacon} (beacons()) {",
+      "\tlocal('\\$${2:bid} \\$${3:user} \\$${4:host}');",
+      "\t\\$${2:bid} = \\$${1:beacon}['id'];",
+      "\t\\$${3:user} = \\$${1:beacon}['user'];",
+      "\t\\$${4:host} = \\$${1:beacon}['computer'];",
+      "\t$0",
+      "}"
+    ],
+    "description": "Iterate over all active beacons"
+  },
+  "Show Error": {
+    "prefix": "show_error",
+    "body": [
+      "show_error(\"${1:Error message}\");"
+    ],
+    "description": "Show error dialog"
+  },
+  "Show Message": {
+    "prefix": "show_message",
+    "body": [
+      "show_message(\"${1:Message}\");"
+    ],
+    "description": "Show info dialog"
+  },
+  "Elog": {
+    "prefix": "elog",
+    "body": [
+      "elog(\"${1:message}\");"
+    ],
+    "description": "Log message to the Event Log"
+  },
+  "Credentials Add": {
+    "prefix": "credential_add",
+    "body": [
+      "credential_add(\\$${1:bid}, %(user => \"${2:username}\", password => \"${3:password}\", realm => \"${4:domain}\", source => \"${5:source}\", host => \"${6:host}\"));"
+    ],
+    "description": "Add credentials to the Credential Store"
+  },
+  "Beacon Info": {
+    "prefix": "beacon_info",
+    "body": [
+      "\\$${1:value} = beacon_info(\\$${2:bid}, \"${3|id,pid,user,computer,os,arch,internal,external,last,session,listener,sleep,jitter,host,port|}\");"
+    ],
+    "description": "Get beacon metadata field"
+  },
+  "Script Resource": {
+    "prefix": "script_resource",
+    "body": [
+      "\\$${1:path} = script_resource(\"${2:file.txt}\");"
+    ],
+    "description": "Get path to a resource file relative to this script"
+  },
+  "Include Script": {
+    "prefix": "include",
+    "body": [
+      "include(script_resource(\"${1:other_script.cna}\"));"
+    ],
+    "description": "Include another script file"
+  },
+  "Listener Create": {
+    "prefix": "listener_create_ext",
+    "body": [
+      "listener_create_ext(\"${1:listener_name}\", \"${2:Beacon HTTP}\", %(host => \"${3:0.0.0.0}\", port => \"${4:80}\"));"
+    ],
+    "description": "Create a listener"
+  },
+  "Base64 Encode": {
+    "prefix": "base64_encode",
+    "body": [
+      "\\$${1:encoded} = base64_encode(${2:\\$data});"
+    ],
+    "description": "Base64 encode data"
+  },
+  "Base64 Decode": {
+    "prefix": "base64_decode",
+    "body": [
+      "\\$${1:decoded} = base64_decode(${2:\\$data});"
+    ],
+    "description": "Base64 decode data"
+  },
+  "Str XOR": {
+    "prefix": "str_xor",
+    "body": [
+      "\\$${1:result} = str_xor(${2:\\$data}, \"${3:key}\");"
+    ],
+    "description": "XOR a string with a key"
+  },
+  "Highlight Beacon": {
+    "prefix": "highlight",
+    "body": [
+      "highlight(\"beacons\", @(\\$${1:bid}), \"${2|red,orange,yellow,green,blue,white,lime,cyan,purple|}\");"
+    ],
+    "description": "Highlight a beacon row in the UI"
+  },
+  "Register Beacon Command": {
+    "prefix": "beacon_command_register",
+    "body": [
+      "beacon_command_register(\"${1:command_name}\", \"${2:Short description}\", \"${3:Synopsis: ${1:command_name} <args>\\nUsage details here}\");"
+    ],
+    "description": "Register documentation for a custom Beacon command"
+  },
+  "Popup with Beacon Actions": {
+    "prefix": "popup_beacon",
+    "body": [
+      "popup beacon {",
+      "\tmenu \"${1:My Menu}\" {",
+      "\t\titem \"${2:Action}\" {",
+      "\t\t\tlocal('\\$${3:bid}');",
+      "\t\t\tforeach \\$${3:bid} (\\$1) {",
+      "\t\t\t\t$0",
+      "\t\t\t}",
+      "\t\t}",
+      "\t}",
+      "}"
+    ],
+    "description": "Popup menu for Beacon context"
+  },
+  "Local Variables": {
+    "prefix": "local",
+    "body": [
+      "local('\\$${1:var1} \\$${2:var2}');"
+    ],
+    "description": "Declare local variables"
+  },
+  "Array Creation": {
+    "prefix": "@arr",
+    "body": [
+      "\\$${1:arr} = @(${2:\"item1\", \"item2\"});"
+    ],
+    "description": "Create an array"
+  },
+  "Hash Creation": {
+    "prefix": "%hash",
+    "body": [
+      "\\$${1:hash} = %(${2:key} => \"${3:value}\");"
+    ],
+    "description": "Create a hash/dictionary"
+  }
+}
