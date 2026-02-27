@@ -20,9 +20,10 @@
     "cna",
     "sleep"
   ],
+  "publisher": "Randark",
   "repository": {
     "type": "git",
-    "url": "https://github.com/user/AggressorScript-lsp.git"
+    "url": "https://github.com/Randark-JMT/AggressorScript-lsp"
   },
   "license": "MIT",
   "main": "./out/extension.js",
